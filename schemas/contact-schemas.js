@@ -21,3 +21,7 @@ export const contactUpdateSchema = Joi.object({
 .message({
     "object.min": `missing field`,
 })
+
+export const contactFavoriteSchema = Joi.object({
+    favorite: Joi.boolean().required(),
+})
