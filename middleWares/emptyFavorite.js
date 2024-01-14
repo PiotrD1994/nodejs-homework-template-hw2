@@ -1,4 +1,4 @@
-import httpError from "../error/httpError";
+import httpError from "../error/httpError.js";
 export const isEmptyFavorite = (req, res, next) => {
     const {length} = Object.keys(req.body)
     if(!length) {

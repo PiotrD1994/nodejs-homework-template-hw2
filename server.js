@@ -6,9 +6,9 @@ dotenv.config()
 const {DB_HOST, PORT} = process.env
 
 
-app.listen(3000, () => {
-  console.log("Server running. Use our API on port: 3000")
-})
+//app.listen(3000, () => {
+ // console.log("Server running. Use our API on port: 3000")
+//})
 
 mongoose.connect(DB_HOST).then(() =>{app.listen(PORT, () => {
   console.log("Database connection successfl")
