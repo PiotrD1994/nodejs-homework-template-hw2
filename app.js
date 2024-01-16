@@ -7,6 +7,9 @@ import dotenv from 'dotenv'
 dotenv.config()
 const app = express()
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 
 app.use(logger(formatsLogger))
