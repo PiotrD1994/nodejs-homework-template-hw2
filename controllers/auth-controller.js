@@ -19,7 +19,7 @@ const signup = async(req, res) => {
 const hashPassword = await bcrypt.hash(password, saltUserSignUp)
 const newUser = await UserModel.create({...req.body, password: hashPassword })
 
-res.status(201).json({
+ return res.status(201).json({
     user: {
         email: newUser.email,
         subscription: newUser.subscription,
@@ -43,7 +43,7 @@ const signin = async (req, res) => {
     }
     const token = jwt.sign(payload, JWT_SECRET, {expiresIn:"23h"})
     await UserModel.findByIdAndUpdate(id,{token})
-    res.json({
+     return res.json({
         token: token,
         user: {
             email: user.email,
@@ -54,7 +54,7 @@ const signin = async (req, res) => {
 
 const currerntUser = async(req, res) => {
     const {email, subscription} = req.user
-    re.json({
+    return res.json({
         email,
         subscription,
     })
@@ -66,7 +66,7 @@ const logout = async(req, res) => {
         return next(httpError(401, "Not authorized"))
     }
     await UserModel.findByIdAndUpdate(_id, {token: ""})
-    res.status(204).json()
+   return  res.status(204).json()
 }
 
 const userSubscription = async(req, res) => {
@@ -80,7 +80,7 @@ const userSubscription = async(req, res) => {
     if(!user) {
         return httpError(404, "User not found")
     }
-    res.json(user)
+     return res.json(user)
 }
 
 export default {
