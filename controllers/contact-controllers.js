@@ -8,7 +8,7 @@ const optionsUpdate = {
 
 const getContactsAll = async (req, res, next) => {
     const result = await Contact.find()
-    res.json(result)
+   return res.json(result)
 }
 
 const getById = async(req, res, next) => {
@@ -17,12 +17,12 @@ const getById = async(req, res, next) => {
   if(!result) {
     return next(httpError(404, 'Not found'))
   }
-  res.json(result)
+  return res.json(result)
 }
 
 const add = async(req, res) => {
   const result = await Contact.create(req.body)
-  res.status(201).json(result)
+ return  res.status(201).json(result)
 }
 
 const deleteById = async(req, res, next) => {
@@ -31,7 +31,7 @@ const deleteById = async(req, res, next) => {
   if(!result) {
     return next(httpError(404, 'Not found'))
   }
-  res.json({messsage: 'contact deleted'})
+   return res.json({messsage: 'contact deleted'})
 }
 
 const updateContactById = async(req, res, next) => {
@@ -40,7 +40,7 @@ const updateContactById = async(req, res, next) => {
   if(!result) {
     return next(httpError(404, 'Not found'))
   }
-  res.json(result)
+   return res.json(result)
 }
 
 const updateStatusContact = async(req, res, next) => {
@@ -49,7 +49,7 @@ const updateStatusContact = async(req, res, next) => {
     if(!result) {
         return next(httpError(404, `${contactId} not found`))
     }
-    res.json(result)
+     return res.json(result)
 }
 
 export default {

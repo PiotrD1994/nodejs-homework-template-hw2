@@ -2,7 +2,7 @@ import express from 'express'
 import controllersContacts from '../../controllers/contact-controllers.js'
 import { contactAddSchema, contactUpdateSchema, contactFavoriteSchema } from '../../schemas/contact-schemas.js'
 import { isValidId } from '../../middleWares/validId.js'
-import { isEmptyBody } from '../../middleWares/emptyBody.js'
+import {isEmptyBody}  from '../../middleWares/emptyBody.js'
 import { isEmptyFavorite } from '../../middleWares/emptyFavorite.js'
 import validateBody from '../../decorations/validBody.js'
 
