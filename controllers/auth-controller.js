@@ -1,11 +1,17 @@
-import UserModel from "../models/user.js";
+import UserModel from "../models/user.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import httpError from "../error/httpError.js";
+import httpError from "../error/httpError.js"
 import dotenv from "dotenv"
-import { userSchema } from "../models/user.js";
+import { userSchema } from "../models/user.js"
+import path from "path"
+import gravatar from "gravatar"
+import Jimp from "jimp"
+import fs from "fs/promises"
+
 
 dotenv.config()
+const preservationAvatarPath = path.resolve('public', 'avatars')
 
 const saltUserSignUp = 10
 const {JWT_SECRET} = process.env
@@ -16,8 +22,9 @@ const signup = async(req, res) => {
     if(user) {
      return httpError(409, "Email is already used")
     }
+const avatarURL = gravatar.url(email)    
 const hashPassword = await bcrypt.hash(password, saltUserSignUp)
-const newUser = await UserModel.create({...req.body, password: hashPassword })
+const newUser = await UserModel.create({...req.body, avatarURL, password: hashPassword, })
 
  return res.status(201).json({
     user: {
@@ -83,10 +90,28 @@ const userSubscription = async(req, res) => {
      return res.json(user)
 }
 
+const updateAvatar = async(req, res, next) => {
+if(!req.file) {
+return next(httpError(400, "Avatar not found"))
+}
+const {originalname, path: oldPath} = req.file
+const {_id: id} = req.user
+const jimpAvatar = await Jimp.read(oldPath)
+await jimpAvatar.resize(250, 250).quality(60).write(oldPath)
+console.log(jimpAvatar)
+const newName = `${Date.now()}_${originalname}`;
+const newPath = path.join(preservationAvatarPath, newName);
+await fs.rename(oldPath, newPath);
+const avatarURL = path.join("avatars", newName);
+await User.findByIdAndUpdate(id, { avatarURL });
+res.status(200).json({ avatarURL });
+}
+
 export default {
     signin,
     signup,
     currerntUser,
     logout,
     userSubscription,
+    updateAvatar,
 }
