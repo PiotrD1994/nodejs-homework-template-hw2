@@ -98,7 +98,6 @@ const {originalname, path: oldPath} = req.file
 const {_id: id} = req.user
 const jimpAvatar = await Jimp.read(oldPath)
 await jimpAvatar.resize(250, 250).quality(60).write(oldPath)
-console.log(jimpAvatar)
 const newName = `${Date.now()}_${originalname}`;
 const newPath = path.join(preservationAvatarPath, newName);
 await fs.rename(oldPath, newPath);
