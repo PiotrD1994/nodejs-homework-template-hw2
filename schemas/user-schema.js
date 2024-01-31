@@ -22,3 +22,10 @@ export const userSigninSchema = Joi.object({
         "any.required": "Please fill password field"
     }),
 });
+
+export const userEmailSchema = Joi.object({
+    email: Joi.string().required().messages({
+        "string.empty":"email can't be empty",
+        "any.required": "missed required email field",
+    })
+})

@@ -20,6 +20,9 @@ export const userSchema = new Schema(
         enum: ["starter", "pro", "business"],
         default: "starter",
       },
+      veryficationCode: {
+        type: String,
+      },
       token: String,
     },
     { versionKey: false, timestamps: true }

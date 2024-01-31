@@ -8,13 +8,15 @@ import path from "path"
 import gravatar from "gravatar"
 import Jimp from "jimp"
 import fs from "fs/promises"
+import { sendEmail } from "../error/SendEmail.js"
+import { nanoid } from "nanoid"
 
 
 dotenv.config()
 const preservationAvatarPath = path.resolve('public', 'avatars')
 
 const saltUserSignUp = 10
-const {JWT_SECRET} = process.env
+const {JWT_SECRET, BASE_URL} = process.env
 
 const signup = async(req, res) => {
     const {email, password} = req.body
@@ -24,8 +26,17 @@ const signup = async(req, res) => {
     }
 const avatarURL = gravatar.url(email)    
 const hashPassword = await bcrypt.hash(password, saltUserSignUp)
-const newUser = await UserModel.create({...req.body, avatarURL, password: hashPassword, })
+const veryficationCode = nanoid()
+const newUser = await UserModel.create({...req.body, avatarURL, password: hashPassword, veryficationCode, })
 
+
+const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${veryficationCode}">Click for verify</a>`
+}
+
+await sendEmail(verifyEmail)
  return res.status(201).json({
     user: {
         email: newUser.email,
@@ -33,6 +44,46 @@ const newUser = await UserModel.create({...req.body, avatarURL, password: hashPa
     }
 })
 }
+
+const verify = async (req, res) => {
+    const { verificationCode } = req.params;
+  
+    const user = await UserModel.findOne({ verificationCode });
+    if (!user) {
+      throw httpError(404, "User not found");
+    }
+  
+    await UserModel.findByIdAndUpdate(user._id, {
+      verify: true,
+      verificationCode: "",
+    });
+  
+    res.json({ message: "Verification successful" });
+  };
+
+  
+const resendVerifyEmail = async (req, res) => {
+    const { email } = req.body;
+    const user = await UserModel.findOne({ email });
+  
+    if (!user) {
+      throw httpError(404, "Email not found");
+    }
+  
+    if (user.verify) {
+      throw httpError(400, "Verification has already been passed");
+    }
+  
+    const verifyEmail = {
+      to: email,
+      subject: "Verify email ",
+      html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${user.verificationCode}">Click for verify</a>`,
+    };
+  
+    await sendEmail(verifyEmail);
+  
+    res.json({ message: "Verification email sent" });
+  };
 
 const signin = async (req, res) => {
     const {email, password} = req.body
@@ -113,4 +164,6 @@ export default {
     logout,
     userSubscription,
     updateAvatar,
+    verify,
+    resendVerifyEmail
 }
