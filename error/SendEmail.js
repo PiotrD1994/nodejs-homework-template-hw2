@@ -6,8 +6,8 @@ dotenv.config()
 const {NET_PASSWORD, EMAIL_FROM} = process.env
 
 const emailConfig = {
-    host: "smtp.ukr.net",
-    port: 465,
+    host: "smtp.sendgrid.net",
+    port: 587,
     secure: true,
     auth: {
       user: EMAIL_FROM,

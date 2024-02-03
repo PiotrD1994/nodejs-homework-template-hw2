@@ -26,14 +26,14 @@ const signup = async(req, res) => {
     }
 const avatarURL = gravatar.url(email)    
 const hashPassword = await bcrypt.hash(password, saltUserSignUp)
-const veryficationCode = nanoid()
-const newUser = await UserModel.create({...req.body, avatarURL, password: hashPassword, veryficationCode, })
+const verificationCode = nanoid()
+const newUser = await UserModel.create({...req.body, avatarURL, password: hashPassword, verificationCode, })
 
 
 const verifyEmail = {
     to: email,
     subject: "Verify email",
-    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${veryficationCode}">Click for verify</a>`
+    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationCode}">Click for verify</a>`
 }
 
 await sendEmail(verifyEmail)
