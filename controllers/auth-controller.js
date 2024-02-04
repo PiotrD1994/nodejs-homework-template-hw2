@@ -10,14 +10,10 @@ import Jimp from "jimp"
 import fs from "fs/promises"
 import { sendEmail } from "../error/SendEmail.js"
 import { nanoid } from "nanoid"
-
-
 dotenv.config()
 const preservationAvatarPath = path.resolve('public', 'avatars')
-
 const saltUserSignUp = 10
 const {JWT_SECRET, BASE_URL} = process.env
-
 const signup = async(req, res) => {
     const {email, password} = req.body
     const user = await UserModel.findOne({email})
@@ -28,14 +24,11 @@ const avatarURL = gravatar.url(email)
 const hashPassword = await bcrypt.hash(password, saltUserSignUp)
 const verificationCode = nanoid()
 const newUser = await UserModel.create({...req.body, avatarURL, password: hashPassword, verificationCode, })
-
-
 const verifyEmail = {
     to: email,
     subject: "Verify email",
     html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationCode}">Click for verify</a>`
 }
-
 await sendEmail(verifyEmail)
  return res.status(201).json({
     user: {
@@ -44,47 +37,35 @@ await sendEmail(verifyEmail)
     }
 })
 }
-
 const verify = async (req, res) => {
     const { verificationCode } = req.params;
-  
     const user = await UserModel.findOne({ verificationCode });
     if (!user) {
       throw httpError(404, "User not found");
     }
-  
     await UserModel.findByIdAndUpdate(user._id, {
       verify: true,
       verificationCode: "",
     });
-  
     res.json({ message: "Verification successful" });
   };
-
-  
 const resendVerifyEmail = async (req, res) => {
     const { email } = req.body;
     const user = await UserModel.findOne({ email });
-  
     if (!user) {
       throw httpError(404, "Email not found");
     }
-  
     if (user.verify) {
       throw httpError(400, "Verification has already been passed");
     }
-  
     const verifyEmail = {
       to: email,
       subject: "Verify email ",
       html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${user.verificationCode}">Click for verify</a>`,
     };
-  
     await sendEmail(verifyEmail);
-  
     res.json({ message: "Verification email sent" });
   };
-
 const signin = async (req, res) => {
     const {email, password} = req.body
     const user = await UserModel.fingOne({email})
@@ -109,7 +90,6 @@ const signin = async (req, res) => {
         }
     })
 }
-
 const currerntUser = async(req, res) => {
     const {email, subscription} = req.user
     return res.json({
@@ -117,7 +97,6 @@ const currerntUser = async(req, res) => {
         subscription,
     })
 }
-
 const logout = async(req, res) => {
     const {_id} = req.user
     if(!_id) {
@@ -126,7 +105,6 @@ const logout = async(req, res) => {
     await UserModel.findByIdAndUpdate(_id, {token: ""})
    return  res.status(204).json()
 }
-
 const userSubscription = async(req, res) => {
     const {subscription} = req.body
     const {_id} = req.user
@@ -140,7 +118,6 @@ const userSubscription = async(req, res) => {
     }
      return res.json(user)
 }
-
 const updateAvatar = async(req, res, next) => {
 if(!req.file) {
 return next(httpError(400, "Avatar not found"))
@@ -156,7 +133,6 @@ const avatarURL = path.join("avatars", newName);
 await User.findByIdAndUpdate(id, { avatarURL });
 res.status(200).json({ avatarURL });
 }
-
 export default {
     signin,
     signup,

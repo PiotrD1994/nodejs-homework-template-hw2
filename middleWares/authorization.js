@@ -2,11 +2,8 @@ import jwt from "jsonwebtoken"
 import httpError from "../error/httpError.js"
 import dotenv from "dotenv"
 import UserModel from "../models/user.js" 
-
 dotenv.config()
-
 const {JWT_SECRET} = process.env
-
 const authorization = async (req, res, next) => {
     const {authorization} = req.headers
     if(!authorization) {
@@ -28,5 +25,4 @@ const [bearer, token] = authorization.split(" ")
     next(httpError(401, "Not authorized"))
  }
 }
-
 export default authorization

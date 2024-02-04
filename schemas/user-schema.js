@@ -1,6 +1,4 @@
 import Joi from "joi"
-
-
 export const userSignupSchema = Joi.object({
     email: Joi.string().required().messages({
         "string.empty": "email can't be empty",
@@ -11,7 +9,6 @@ export const userSignupSchema = Joi.object({
         "any.required": "Please fill password field"
     }),
 });
-
 export const userSigninSchema = Joi.object({
     email: Joi.string().required().messages({
         "string.empty": "email can't be empty",
@@ -22,7 +19,6 @@ export const userSigninSchema = Joi.object({
         "any.required": "Please fill password field"
     }),
 });
-
 export const userEmailSchema = Joi.object({
     email: Joi.string().required().messages({
         "string.empty":"email can't be empty",

@@ -1,6 +1,5 @@
 import {Schema, model} from "mongoose"
 import { addUpdateOptions, handleSaveError } from "./hooks.js"
-
 export const userSchema = new Schema(
     {
       password: {
@@ -20,6 +19,10 @@ export const userSchema = new Schema(
         enum: ["starter", "pro", "business"],
         default: "starter",
       },
+      verify: {
+        type: Boolean,
+        default: false,
+      },
       veryficationCode: {
         type: String,
       },
@@ -27,11 +30,8 @@ export const userSchema = new Schema(
     },
     { versionKey: false, timestamps: true }
   );
-
   userSchema.post("save", handleSaveError)
   userSchema.pre("findOneAndUpdate", addUpdateOptions)
   userSchema.post("findOneAndUpdate", handleSaveError)
-
   const UserModel = model("user", userSchema)
-
   export default UserModel

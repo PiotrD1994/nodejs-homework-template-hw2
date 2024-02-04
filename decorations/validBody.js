@@ -1,5 +1,4 @@
 import httpError from "../error/httpError.js";
-
 const validateBody = (schema) => {
   const verification = (req, res, next) => {
     const { error } = schema.validate(req.body);
@@ -10,5 +9,4 @@ const validateBody = (schema) => {
   };
   return verification;
 };
-
 export default validateBody;
